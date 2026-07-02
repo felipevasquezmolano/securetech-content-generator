@@ -8,11 +8,25 @@
     label { display: block; margin-top: 10px; }
     select, button { margin-top: 5px; padding: 8px; }
     #output { margin-top: 20px; padding: 15px; border: 1px solid #ccc; white-space: pre-line; }
+    /* 🔹 Estilo del spinner */
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #387D7A; /* Pine Blue */
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <h1>Generador de Contenido SecureTech</h1>
-
   <!-- 🔹 FORMULARIO PRINCIPAL -->
   <form id="generatorForm">
     <label>Servicio:
@@ -54,13 +68,14 @@
   <!-- 🔹 RESULTADOS DE TEXTO -->
   <div id="output"></div>
 
+  <!-- 🔹 SPINNER DE CARGA -->
+  <div class="spinner" id="spinner"></div>
   <!-- 🔹 CONTENEDOR DE IMAGEN -->
   <div id="imageContainer" style="position:relative; display:inline-block; margin-top:20px;">
     <img id="imageOutput" style="width:500px; border:1px solid #ccc;">
     <img src="Tecnología segura del logo (1).png" 
          style="position:absolute; bottom:10px; right:10px; width:100px;">
   </div>
-
   <!-- 🔹 SCRIPT DE FUNCIONES -->
   <script>
     let lastCopy = "";
@@ -72,112 +87,102 @@
       const clientType = document.getElementById('clientType').value;
       const social = document.getElementById('social').value;
 
-      const apiKey = "TU_API_KEY_AQUI"; // ⚠️ Reemplaza con tu clave real de Gemini
+      const apiKey = "AQ.Ab8RN6IToyqDU_LaFF4lArSWcnauaAwzVUdlLEf2zaX2uGu92g"; // ⚠️ Reemplaza con tu clave real de Gemini
 
-      // 🔹 Prompts optimizados por servicio
-      let textPrompt = "";
-      let imagePrompt = "";
+      // Mostrar spinner y mensaje de carga
+      document.getElementById('spinner').style.display = "block";
+      document.getElementById('output').innerText = "⏳ Generando contenido, por favor espera...";
+      document.getElementById('imageOutput').src = "";
 
-      if (service === "mantenimiento") {
-        textPrompt = `
-          Genera un texto publicitario para SecureTech Preventive Solutions.
-          Servicio: Mantenimiento preventivo de computadores.
-          Enfócate en la importancia de prolongar la vida útil del equipo, mejorar el rendimiento y evitar fallas críticas.
-          Cliente objetivo: ${clientType}.
-          Red social: ${social}.
-          Incluye siempre estos datos de contacto:
-          Felipe Vásquez – 3017878213 | Johan Juzga – 3003270624 | securetechps@outlook.com.
-          Usa tono profesional, claro y confiable.
-          Añade hashtags como #MantenimientoPC #ComputadoresSeguros #SecureTech.
-        `;
-        imagePrompt = `
-          Crea una imagen corporativa para promocionar el servicio de mantenimiento preventivo de computadores.
-          Estilo: profesional, limpio y tecnológico.
-          Colores: Pine Blue (#387D7A), Twilight Indigo (#273469), Lavender Gray (#AAADC4).
-          Deja espacio en la esquina inferior derecha para colocar el logo de la empresa.
-        `;
-      } else if (service === "antivirus") {
-        textPrompt = `
-          Genera un texto publicitario para SecureTech Preventive Solutions.
-          Servicio: Venta de licencias de Antivirus Kaspersky.
-          Resalta la protección contra virus, malware y amenazas en línea, con soporte confiable.
-          Cliente objetivo: ${clientType}.
-          Red social: ${social}.
-          Incluye siempre estos datos de contacto:
-          Felipe Vásquez – 3017878213 | Johan Juzga – 3003270624 | securetechps@outlook.com.
-          Usa tono persuasivo y confiable.
-          Añade hashtags como #Kaspersky #ProtecciónDigital #SecureTech.
-        `;
-        imagePrompt = `
-          Crea una imagen publicitaria para promocionar licencias de Antivirus Kaspersky.
-          Estilo: corporativo, seguro y tecnológico.
-          Colores: Pine Blue (#387D7A), Twilight Indigo (#273469), Lavender Gray (#AAADC4).
-          Deja espacio en la esquina inferior derecha para colocar el logo de la empresa.
-        `;
-      } else if (service === "licencias365") {
-        textPrompt = `
-          Genera un texto publicitario para SecureTech Preventive Solutions.
-          Servicio: Venta de licencias Microsoft 365 originales.
-          Resalta las ventajas de productividad, colaboración en la nube y seguridad empresarial.
-          Cliente objetivo: ${clientType}.
-          Red social: ${social}.
-          Incluye siempre estos datos de contacto:
-          Felipe Vásquez – 3017878213 | Johan Juzga – 3003270624 | securetechps@outlook.com.
-          Usa tono profesional y confiable.
-          Añade hashtags como #Microsoft365 #Productividad #SecureTech.
-        `;
-        imagePrompt = `
-          Crea una imagen publicitaria para promocionar licencias Microsoft 365 originales.
-          Estilo: corporativo, moderno y enfocado en productividad.
-          Colores: Pine Blue (#387D7A), Twilight Indigo (#273469), Lavender Gray (#AAADC4).
-          Deja espacio en la esquina inferior derecha para colocar el logo de la empresa.
-        `;
-      } else if (service === "licenciasWindows") {
-        textPrompt = `
-          Genera un texto publicitario para SecureTech Preventive Solutions.
-          Servicio: Venta de licencias Windows originales.
-          Resalta la seguridad, estabilidad y soporte oficial de Microsoft.
-          Cliente objetivo: ${clientType}.
-          Red social: ${social}.
-          Incluye siempre estos datos de contacto:
-          Felipe Vásquez – 3017878213 | Johan Juzga – 3003270624 | securetechps@outlook.com.
-          Usa tono claro y confiable.
-          Añade hashtags como #WindowsOriginal #SeguridadDigital #SecureTech.
-        `;
-        imagePrompt = `
-          Crea una imagen publicitaria para promocionar licencias Windows originales.
-          Estilo: corporativo, confiable y tecnológico.
-          Colores: Pine Blue (#387D7A), Twilight Indigo (#273469), Lavender Gray (#AAADC4).
-          Deja espacio en la esquina inferior derecha para colocar el logo de la empresa.
-        `;
+      // 🔹 Aquí van los prompts optimizados (igual que ya los tienes en tu versión)
+      // ... (bloque de if/else con textPrompt e imagePrompt) ...
+if (service === "mantenimiento") {
+  textPrompt = `Genera un texto publicitario para SecureTech Preventive Solutions.
+  Servicio: Mantenimiento preventivo de computadores.
+  Enfócate en la importancia de prolongar la vida útil del equipo, mejorar el rendimiento y evitar fallas críticas.
+  Cliente objetivo: ${clientType}.
+  Red social: ${social}.
+  Incluye siempre estos datos de contacto:
+  Felipe Vásquez – 3017878213 | Johan Juzga – 3003270624 | securetechps@outlook.com.
+  Usa tono profesional, claro y confiable.
+  Añade hashtags como #MantenimientoPC #ComputadoresSeguros #SecureTech.`;
+  imagePrompt = `Crea una imagen corporativa para promocionar el servicio de mantenimiento preventivo de computadores.
+  Estilo: profesional, limpio y tecnológico.
+  Colores: Pine Blue (#387D7A), Twilight Indigo (#273469), Lavender Gray (#AAADC4).
+  Deja espacio en la esquina inferior derecha para colocar el logo de la empresa.`;
+} else if (service === "antivirus") {
+  textPrompt = `Genera un texto publicitario para SecureTech Preventive Solutions.
+  Servicio: Venta de licencias de Antivirus Kaspersky.
+  Resalta la protección contra virus, malware y amenazas en línea, con soporte confiable.
+  Cliente objetivo: ${clientType}.
+  Red social: ${social}.
+  Incluye siempre estos datos de contacto:
+  Felipe Vásquez – 3017878213 | Johan Juzga – 3003270624 | securetechps@outlook.com.
+  Usa tono persuasivo y confiable.
+  Añade hashtags como #Kaspersky #ProtecciónDigital #SecureTech.`;
+  imagePrompt = `Crea una imagen publicitaria para promocionar licencias de Antivirus Kaspersky.
+  Estilo: corporativo, seguro y tecnológico.
+  Colores: Pine Blue (#387D7A), Twilight Indigo (#273469), Lavender Gray (#AAADC4).
+  Deja espacio en la esquina inferior derecha para colocar el logo de la empresa.`;
+} else if (service === "licencias365") {
+  textPrompt = `Genera un texto publicitario para SecureTech Preventive Solutions.
+  Servicio: Venta de licencias Microsoft 365 originales.
+  Resalta las ventajas de productividad, colaboración en la nube y seguridad empresarial.
+  Cliente objetivo: ${clientType}.
+  Red social: ${social}.
+  Incluye siempre estos datos de contacto:
+  Felipe Vásquez – 3017878213 | Johan Juzga – 3003270624 | securetechps@outlook.com.
+  Usa tono profesional y confiable.
+  Añade hashtags como #Microsoft365 #Productividad #SecureTech.`;
+  imagePrompt = `Crea una imagen publicitaria para promocionar licencias Microsoft 365 originales.
+  Estilo: corporativo, moderno y enfocado en productividad.
+  Colores: Pine Blue (#387D7A), Twilight Indigo (#273469), Lavender Gray (#AAADC4).
+  Deja espacio en la esquina inferior derecha para colocar el logo de la empresa.`;
+} else if (service === "licenciasWindows") {
+  textPrompt = `Genera un texto publicitario para SecureTech Preventive Solutions.
+  Servicio: Venta de licencias Windows originales.
+  Resalta la seguridad, estabilidad y soporte oficial de Microsoft.
+  Cliente objetivo: ${clientType}.
+  Red social: ${social}.
+  Incluye siempre estos datos de contacto:
+  Felipe Vásquez – 3017878213 | Johan Juzga – 3003270624 | securetechps@outlook.com.
+  Usa tono claro y confiable.
+  Añade hashtags como #WindowsOriginal #SeguridadDigital #SecureTech.`;
+  imagePrompt = `Crea una imagen publicitaria para promocionar licencias Windows originales.
+  Estilo: corporativo, confiable y tecnológico.
+  Colores: Pine Blue (#387D7A), Twilight Indigo (#273469), Lavender Gray (#AAADC4).
+  Deja espacio en la esquina inferior derecha para colocar el logo de la empresa.`;
+}
+
+      try {
+        // Llamada a Gemini para texto
+        const textResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + apiKey, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents: [{ parts: [{ text: textPrompt }] }] })
+        });
+        const textData = await textResponse.json();
+        lastCopy = textData.candidates[0].content.parts[0].text;
+        document.getElementById('output').innerText = lastCopy;
+
+        // Llamada a Gemini para imagen
+        const imageResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateImage?key=" + apiKey, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: imagePrompt })
+        });
+        const imageData = await imageResponse.json();
+        lastImageBase64 = imageData.image;
+        document.getElementById('imageOutput').src = "data:image/png;base64," + lastImageBase64;
+
+      } catch (error) {
+        document.getElementById('output').innerText = "❌ Ocurrió un error al generar el contenido.";
+        console.error(error);
+      } finally {
+        document.getElementById('spinner').style.display = "none";
       }
-
-      // 🔹 Llamada a Gemini para texto
-      const textResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + apiKey, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [{ text: textPrompt }] }] })
-      });
-      const textData = await textResponse.json();
-      lastCopy = textData.candidates[0].content.parts[0].text;
-      document.getElementById('output').innerText = lastCopy;
-
-      // 🔹 Llamada a Gemini para imagen
-      const imageResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateImage?key=" + apiKey, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: imagePrompt })
-      });
-      const imageData = await imageResponse.json();
-      lastImageBase64 = imageData.image;
-      document.getElementById('imageOutput').src = "data:image/png;base64," + lastImageBase64;
     }
 
-    // 🔹 Función para descargar texto + imagen
-    function downloadContent() {
-      // Descargar texto como .txt
-      const textBlob = new Blob([lastCopy], { type: "text/plain" });
-    // 🔹 Función para descargar texto + imagen
     function downloadContent() {
       // Descargar texto como .txt
       const textBlob = new Blob([lastCopy], { type: "text/plain" });
