@@ -177,3 +177,22 @@
     function downloadContent() {
       // Descargar texto como .txt
       const textBlob = new Blob([lastCopy], { type: "text/plain" });
+    // 🔹 Función para descargar texto + imagen
+    function downloadContent() {
+      // Descargar texto como .txt
+      const textBlob = new Blob([lastCopy], { type: "text/plain" });
+      const textUrl = URL.createObjectURL(textBlob);
+      const textLink = document.createElement("a");
+      textLink.href = textUrl;
+      textLink.download = "contenido-securetech.txt";
+      textLink.click();
+
+      // Descargar imagen como .png
+      const imageLink = document.createElement("a");
+      imageLink.href = "data:image/png;base64," + lastImageBase64;
+      imageLink.download = "imagen-securetech.png";
+      imageLink.click();
+    }
+  </script>
+</body>
+</html>
