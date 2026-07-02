@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generador de Contenido SecureTech</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    label { display: block; margin-top: 10px; }
+    select, button { margin-top: 5px; padding: 8px; }
+    #output { margin-top: 20px; padding: 15px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>Generador de Contenido SecureTech</h1>
+  <form id="generatorForm">
+    <label>Servicio:
+      <select id="service">
+        <option value="antivirus">Venta de Antivirus</option>
+        <option value="mantenimiento">Mantenimiento Preventivo</option>
+        <option value="licencias">Licencias Originales</option>
+      </select>
+    </label>
+    <label>Tipo de contenido:
+      <select id="contentType">
+        <option value="educativo">Educativo</option>
+        <option value="promocional">Promocional</option>
+        <option value="testimonial">Testimonial</option>
+      </select>
+    </label>
+    <label>Tipo de cliente:
+      <select id="clientType">
+        <option value="hogares">Hogares</option>
+        <option value="estudiantes">Estudiantes</option>
+        <option value="profesionales">Profesionales</option>
+        <option value="negocios">Negocios pequeños</option>
+      </select>
+    </label>
+    <label>Red social:
+      <select id="social">
+        <option value="facebook">Facebook</option>
+        <option value="instagram">Instagram</option>
+        <option value="whatsapp">WhatsApp</option>
+      </select>
+    </label>
+    <button type="button" onclick="generateContent()">Generar</button>
+  </form>
+
+  <div id="output"></div>
+
+  <script>
+    function generateContent() {
+      const service = document.getElementById('service').value;
+      const contentType = document.getElementById('contentType').value;
+      const clientType = document.getElementById('clientType').value;
+      const social = document.getElementById('social').value;
+
+      // Aquí se conectaría con una API de IA (Copilot, Gemini, etc.)
+      // Por ahora, generamos un ejemplo fijo:
+      const copy = `🔒 ${service.toUpperCase()} para ${clientType}. 
+      Publicación ${contentType} en ${social}. 
+      Contacto: Felipe 3017878213 | Johan 3003270624 | securetechps@outlook.com`;
+
+      document.getElementById('output').innerText = copy;
+    }
+  </script>
+</body>
+</html>
