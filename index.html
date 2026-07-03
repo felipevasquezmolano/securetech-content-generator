@@ -87,7 +87,7 @@
       const clientType = document.getElementById('clientType').value;
       const social = document.getElementById('social').value;
 
-      const apiKey = "TU_API_KEY_AQUI"; // ⚠️ Reemplaza con tu clave real de Gemini
+      const apiKey = "AQ.Ab8RN6IToyqDU_LaFF4lArSWcnauaAwzVUdlLEf2zaX2uGu92g"; // ⚠️ Reemplaza con tu clave real de Gemini
 
       // Mostrar spinner y mensaje de carga
       document.getElementById('spinner').style.display = "block";
@@ -96,6 +96,9 @@
 
       // 🔹 Aquí van los prompts optimizados (igual que ya los tienes en tu versión)
       // ... (bloque de if/else con textPrompt e imagePrompt) ...
+let textPrompt = "";
+let imagePrompt = "";
+
 if (service === "mantenimiento") {
   textPrompt = `Genera un texto publicitario para SecureTech Preventive Solutions.
   Servicio: Mantenimiento preventivo de computadores.
@@ -175,20 +178,30 @@ if (service === "mantenimiento") {
 
   // 🔹 Llamada a Gemini para imagen
   const imageResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateImage?key=" + apiKey, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt: imagePrompt })
-  });
-  const imageData = await imageResponse.json();
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ prompt: imagePrompt })
+});
+const imageData = await imageResponse.json();
 
-  if (!imageData.image) {
-    console.error("Error en respuesta de Gemini (imagen):", imageData);
-    document.getElementById('output').innerText = "❌ No se pudo generar la imagen. Verifica tu API Key o conexión.";
-    document.getElementById('spinner').style.display = "none";
-    return;
-  }
+if (!imageData.image) {
+  console.error("Error en respuesta de Gemini (imagen):", imageData);
+  document.getElementById('output').innerText = "❌ No se pudo generar la imagen.";
+  document.getElementById('spinner').style.display = "none";
+  return;
+}
 
-  lastImageBase64 = imageData.image;
+lastImageBase64 = imageData.image;
+document.getElementById('imageOutput').src = "data:image/png;base64," + lastImageBase64;
+
+ if (!imageData.candidates || !imageData.candidates[0]) {
+  console.error("Error en respuesta de Gemini (imagen):", imageData);
+  document.getElementById('output').innerText = "❌ No se pudo generar la imagen.";
+  document.getElementById('spinner').style.display = "none";
+  return;
+}
+
+lastImageBase64 = imageData.candidates[0].content.parts[0].text;
   document.getElementById('imageOutput').src = "data:image/png;base64," + lastImageBase64;
 
 } catch (error) {
