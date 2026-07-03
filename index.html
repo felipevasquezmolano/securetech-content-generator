@@ -5,9 +5,9 @@
   <title>Generador de Contenido SecureTech</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    select, button { margin-top: 5px; padding: 10px; width: 100%; }
-    #output { margin-top: 20px; padding: 15px; border: 1px solid #ccc; white-space: pre-line; background: #f9f9f9; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    select, button { margin-top: 5px; padding: 12px; width: 100%; border-radius: 5px; border: 1px solid #ccc; }
+    #output { margin-top: 20px; padding: 15px; border: 1px solid #ccc; white-space: pre-line; background: #f9f9f9; min-height: 50px; }
     .spinner { border: 6px solid #f3f3f3; border-top: 6px solid #387D7A; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; display: none; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
@@ -15,34 +15,77 @@
 <body>
   <h1>Generador de Contenido SecureTech</h1>
   <form id="generatorForm">
-    <!-- Tus selects originales -->
-    <label>Servicio: <select id="service"><option value="mantenimiento">Mantenimiento Preventivo</option><option value="antivirus">Venta de Antivirus</option></select></label>
-    <label>Tipo de contenido: <select id="contentType"><option value="educativo">Educativo</option><option value="promocional">Promocional</option></select></label>
-    <label>Tipo de cliente: <select id="clientType"><option value="hogares">Hogares</option><option value="profesionales">Profesionales</option></select></label>
-    <label>Red social: <select id="social"><option value="facebook">Facebook</option><option value="instagram">Instagram</option></select></label>
+    <label>Servicio:
+      <select id="service">
+        <option value="mantenimiento">Mantenimiento Preventivo de PC</option>
+        <option value="antivirus">Venta de Antivirus Kaspersky</option>
+        <option value="licencias365">Licencias Microsoft 365</option>
+        <option value="licenciasWindows">Licencias Windows Originales</option>
+      </select>
+    </label>
+    <label>Tipo de contenido:
+      <select id="contentType">
+        <option value="educativo">Educativo (tips, tutoriales)</option>
+        <option value="promocional">Promocional (ofertas, servicios)</option>
+        <option value="testimonial">Testimonial</option>
+      </select>
+    </label>
+    <label>Tipo de cliente:
+      <select id="clientType">
+        <option value="hogares">Hogares</option>
+        <option value="estudiantes">Estudiantes</option>
+        <option value="profesionales">Profesionales</option>
+        <option value="negocios">Negocios pequeños</option>
+      </select>
+    </label>
+    <label>Red social:
+      <select id="social">
+        <option value="facebook">Facebook</option>
+        <option value="instagram">Instagram</option>
+        <option value="whatsapp">WhatsApp</option>
+      </select>
+    </label>
+
     <button type="button" onclick="generateAll()" style="background:#387D7A; color:white; border:none; cursor:pointer; margin-top:20px;">Generar Contenido</button>
   </form>
 
   <div class="spinner" id="spinner"></div>
-  <div id="output"></div>
+  <div id="output">Esperando generación...</div>
   <img id="imageOutput" style="width:100%; max-width:500px; margin-top:20px;">
 
   <script>
     async function generateAll() {
-      document.getElementById('spinner').style.display = "block";
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        body: JSON.stringify({
-          service: document.getElementById('service').value,
-          contentType: document.getElementById('contentType').value,
-          clientType: document.getElementById('clientType').value,
-          social: document.getElementById('social').value
-        })
-      });
-      const data = await response.json();
-      document.getElementById('output').innerText = data.text;
-      document.getElementById('imageOutput').src = data.imageUrl;
-      document.getElementById('spinner').style.display = "none";
+      const outputDiv = document.getElementById('output');
+      const spinner = document.getElementById('spinner');
+      
+      spinner.style.display = "block";
+      outputDiv.innerText = "⏳ Generando...";
+
+      try {
+        const response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            service: document.getElementById('service').value,
+            contentType: document.getElementById('contentType').value,
+            clientType: document.getElementById('clientType').value,
+            social: document.getElementById('social').value
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          outputDiv.innerText = data.text;
+          document.getElementById('imageOutput').src = data.imageUrl;
+        } else {
+          outputDiv.innerText = "Error: " + (data.error || "No se pudo conectar con el servidor.");
+        }
+      } catch (err) {
+        outputDiv.innerText = "Error de red: " + err.message;
+      } finally {
+        spinner.style.display = "none";
+      }
     }
   </script>
 </body>
