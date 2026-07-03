@@ -4,7 +4,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { service, contentType, clientType, social } = JSON.parse(req.body);
+    const body = JSON.parse(req.body);
+    const { service, contentType, clientType, social } = body;
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
       method: "POST",
@@ -16,10 +17,9 @@ export default async function handler(req, res) {
     
     const data = await response.json();
 
-    // Verificación robusta: Si no hay candidatos, devolver el error tal cual llega de Google
-    if (!data.candidates || data.candidates.length === 0) {
-      console.error("Respuesta de error de Gemini:", JSON.stringify(data));
-      return res.status(500).json({ error: "Gemini devolvió error: " + JSON.stringify(data) });
+    // Si la API de Google devuelve un error, lo enviamos como un string JSON claro
+    if (!data.candidates) {
+      return res.status(500).json({ error: JSON.stringify(data.error || data) });
     }
 
     const text = data.candidates[0].content.parts[0].text;
@@ -29,7 +29,6 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error("Error crítico:", error);
-    res.status(500).json({ error: "Error en el servidor: " + error.message });
+    res.status(500).json({ error: error.message });
   }
 }
